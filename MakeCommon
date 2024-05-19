@@ -1,0 +1,3 @@
+ObjectListCommon = gkcommon filetype
+ObjectListComp = $(ObjectListCommon) gkcomp
+ObjectListDecomp = $(ObjectListCommon) gkdecomp
