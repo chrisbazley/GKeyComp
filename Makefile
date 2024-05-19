@@ -1,47 +1,57 @@
-# Project:   GKeyComp
+# Project: GKeyComp
 
 # Tools
-CC = cc
-Link = link
+CC = gcc
+Link = gcc
 
 # Toolflags:
-CCCommonFlags = -c -depend !Depend -IC: -throwback -fahi -apcs 3/32/fpe2/swst/fp/nofpr -memaccess -L22-S22-L41
-CCflags = $(CCCommonFlags) -DNDEBUG -Otime
-CCDebugFlags = $(CCCommonFlags) -g -DUSE_CBDEBUG -DFORTIFY -DDEBUG_OUTPUT
-Linkflags = -aif
-LinkDebugFlags = $(Linkflags) -d
+CCCommonFlags = -c  -Wall -Wextra -pedantic -std=c99 -MMD -MP -o $@
+CCFlags = $(CCCommonFlags) -DNDEBUG -O3 -MF $*.d
+CCDebugFlags = $(CCCommonFlags) -g -DDEBUG_OUTPUT -MF $*D.d
+LinkCommonFlags = -o $@
+LinkFlags = $(LinkCommonFlags) $(addprefix -l,$(ReleaseLibs))
+LinkDebugFlags = $(LinkCommonFlags) $(addprefix -l,$(DebugLibs))
 
 include MakeCommon
 
-DebugObjectsComp = $(addprefix debug.,$(ObjectListComp))
-ReleaseObjectsComp = $(addprefix o.,$(ObjectListComp))
+DebugObjectsComp = $(addsuffix .debug,$(ObjectListComp))
+ReleaseObjectsComp = $(addsuffix .o,$(ObjectListComp))
 
-DebugObjectsDecomp = $(addprefix debug.,$(ObjectListDecomp))
-ReleaseObjectsDecomp = $(addprefix o.,$(ObjectListDecomp))
+DebugObjectsDecomp = $(addsuffix .debug,$(ObjectListDecomp))
+ReleaseObjectsDecomp = $(addsuffix .o,$(ObjectListDecomp))
 
-DebugLibs = C:o.Stubs C:o.Fortify C:o.CBDebugLib C:debug.CBUtilLib C:debug.GKeyLib
-ReleaseLibs = C:o.StubsG C:o.CBUtilLib C:o.GKeyLib
+DebugLibs = CBUtildbg GKeydbg
+ReleaseLibs = CBUtil GKey 
 
 # Final targets:
 all: gkdecomp gkcomp gkdecompD gkcompD
 
 gkcomp: $(ReleaseObjectsComp)
-	$(Link) $(LinkFlags) $(ReleaseObjectsComp) $(ReleaseLibs)
+	$(Link) $(ReleaseObjectsComp) $(LinkFlags)
 
 gkcompD: $(DebugObjectsComp)
-	$(Link) $(LinkDebugFlags) $(DebugObjectsComp) $(DebugLibs)
+	$(Link) $(DebugObjectsComp) $(LinkDebugFlags)
 
 gkdecomp: $(ReleaseObjectsDecomp)
-	$(Link) $(LinkFlags) $(ReleaseObjectsDecomp) $(ReleaseLibs)
+	$(Link) $(ReleaseObjectsDecomp) $(LinkFlags)
 
 gkdecompD: $(DebugObjectsDecomp)
-	$(Link) $(LinkDebugFlags) $(DebugObjectsDecomp) $(DebugLibs)
+	$(Link) $(DebugObjectsDecomp) $(LinkDebugFlags)
 
 # User-editable dependencies:
 .SUFFIXES: .o .c .debug
-.c.o:; $(CC) $(CCflags) -o $@ $<
-.c.debug:; $(CC) $(CCDebugFlags) -o $@ $<
+.c.debug:
+	$(CC) $(CCDebugFlags) $<
+
+.c.o:
+	$(CC) $(CCFlags) $<
 
 # Static dependencies:
 
 # Dynamic dependencies:
+# These files are generated during compilation to track C header #includes.
+# It's not an error if they don't exist.
+-include $(addsuffix .d,$(ObjectListComp))
+-include $(addsuffix D.d,$(ObjectListComp))
+-include $(addsuffix .d,$(ObjectListDecomp))
+-include $(addsuffix D.d,$(ObjectListDecomp))

@@ -22,8 +22,10 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#ifdef ACORN_C
 /* RISC OS header files */
 #include "kernel.h"
+#endif
 
 /* Local headers */
 #include "misc.h"
@@ -39,6 +41,7 @@ enum
 /* Platform-specific function */
 bool set_file_type(const char *file_path, bool compressed)
 {
+#ifdef ACORN_C
   _kernel_osfile_block kob;
 
   assert(file_path != NULL);
@@ -47,4 +50,9 @@ bool set_file_type(const char *file_path, bool compressed)
      specified file. */
   kob.load = compressed ? FTYPE_FEDNET : FTYPE_DATA;
   return (_kernel_osfile(18, file_path, &kob) != _kernel_ERROR);
+#else
+  NOT_USED(file_path);
+  NOT_USED(compressed);
+  return true;
+#endif
 }

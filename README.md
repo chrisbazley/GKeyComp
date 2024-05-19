@@ -3,7 +3,7 @@ Gordon Key file compression utilities
 
 (C) Chris Bazley, 2011
 
-Version 0.04 (02 May 2020)
+Version 0.05 (19 May 2024)
 
 -----------------------------------------------------------------------------
  1   Introduction and Purpose
@@ -329,6 +329,11 @@ this type!
 - Failure to close the output stream is now detected and treated like any
   other error since data may have been lost.
 
+0.05 (19 May 2024)
+- Added a new makefile for use on Linux.
+- Improved the README.md file for Linux users.
+- Some code is now conditionally compiled only if the macro ACORN_C is defined.
+
 -----------------------------------------------------------------------------
 9   Compiling the program
 -------------------------
@@ -338,12 +343,14 @@ and link the code you will also require an ISO 9899:1999 standard 'C'
 library and two of my own libraries: CBUtilLib and GKeyLib. These are
 available separately from http://starfighter.acornarcade.com/mysite/
 
-  Two makefiles are supplied:
+  Three makefiles are supplied:
 
-1. 'Makefile' is intended for use with Acorn Make Utility (AMU) and the
+1. 'Makefile' is intended for use with GNU Make and the GNU C Compiler on Linux.
+
+2. 'NMakefile' is intended for use with Acorn Make Utility (AMU) and the
    Norcroft C compiler supplied with the Acorn C/C++ Development Suite.
 
-2. 'GMakefile' is intended for use with GNU Make and the GNU C Compiler.
+3. 'GMakefile' is intended for use with GNU Make and the GNU C Compiler on RISC OS.
 
   The APCS variant specified for the Norcroft compiler is 32 bit for
 compatibility with ARMv5 and fpe2 for compatibility with older versions of
@@ -351,11 +358,14 @@ the floating point emulator. Generation of unaligned data loads/stores is
 disabled for compatibility with ARMv6. When building the code for release,
 it is linked with RISCOS Ltd's generic C library stubs ('StubsG').
 
-  Before compiling the program for other platforms, rename the C source and
-header files with .c and .h file extensions then move them out of their
-respective subdirectories. The only platform-specific code is in filetype.c:
-the set_file_type function. The implementation provided simply sets the RISC
-OS file type of the output file; it could safely be defined as a no-op.
+  Before compiling the library for RISC OS, move the C source and header files
+with .c and .h suffixes into subdirectories named 'c' and 'h' and remove
+those suffixes from their names. You probably also need to create 'o', 'd'
+and 'debug' subdirectories for compiler output.
+
+  The only platform-specific code is the PATH_SEPARATOR macro definition in
+misc.h. This must be defined according to the file name convention on the
+target platform (e.g. '\\' for DOS or Windows).
 
 -----------------------------------------------------------------------------
 10  Licence and Disclaimer

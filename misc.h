@@ -12,10 +12,6 @@
 #define PATH_SEPARATOR '.'
 #endif
 
-#ifndef EXT_SEPARATOR
-#define EXT_SEPARATOR '/' /* e.g. ADFS::4.$.Star3000.Graphics.Earth1/obj */
-#endif
-
 #ifdef FORTIFY
 #include "Fortify.h"
 #endif
