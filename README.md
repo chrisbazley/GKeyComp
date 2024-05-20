@@ -341,7 +341,7 @@ this type!
   Source code is only supplied for the command-line programs. To compile
 and link the code you will also require an ISO 9899:1999 standard 'C'
 library and two of my own libraries: CBUtilLib and GKeyLib. These are
-available separately from http://starfighter.acornarcade.com/mysite/
+available separately from https://github.com/chrisbazley/
 
   Three makefiles are supplied:
 
