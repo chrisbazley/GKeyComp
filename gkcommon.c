@@ -303,7 +303,7 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor, const char
     } else if (is_switch(opt, "verbose", 1) || is_switch(opt, "debug", 1)) {
       /* Enable debugging output */
       verbose = true;
-      printf(description);
+      puts(description);
     } else {
       fprintf(stderr, "Unrecognised switch '%s'\n", opt);
       return syntax_msg(stderr, argv[0]);

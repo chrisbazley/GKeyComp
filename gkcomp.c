@@ -241,7 +241,7 @@ int main(int argc, const char *argv[])
 {
   static const char description[] =
     "Gordon Key file compression utility, "VERSION_STRING"\n"
-    "Copyright (C) 2011, Christopher Bazley\n";
+    "Copyright (C) 2011, Christopher Bazley";
 
   return main_common(argc, argv, comp, description, true);
 }
