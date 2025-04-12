@@ -55,7 +55,7 @@ static void show_progress(long int in, long int out)
   }
 }
 
-static bool update_progress(void *arg, size_t in, size_t out)
+static bool update_progress(_Optional void *arg, size_t in, size_t out)
 {
   NOT_USED(arg);
 
@@ -71,7 +71,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
   char in_buffer[BUFFER_SIZE], out_buffer[BUFFER_SIZE];
   bool in_pending, success = false;
   long int expected, out_total, in_total;
-  GKeyDecomp *decomp = NULL;
+  _Optional GKeyDecomp *decomp = NULL;
   GKeyStatus status;
   GKeyParameters params;
 
@@ -110,7 +110,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
   params.out_buffer = out_buffer;
   params.out_size = sizeof(out_buffer);
   params.in_size = 0;
-  params.prog_cb = verbose ? update_progress : NULL;
+  params.prog_cb = verbose ? update_progress : (GKeyProgressFn *)NULL;
   params.cb_arg = NULL;
 
   do {
@@ -130,7 +130,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
     }
 
     /* Decompress the data from the input buffer to the output buffer */
-    status = gkeydecomp_decompress(decomp, &params);
+    status = gkeydecomp_decompress(&*decomp, &params);
 
     /* If the input buffer is empty and it cannot be (re-)filled then
        there is no more input pending. */

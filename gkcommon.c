@@ -82,9 +82,12 @@ static bool fcopy(FILE *in, FILE *out)
   return success;
 }
 
-static bool process_file(const char *input_file, const char *output_file, GKProcessFn *processor, unsigned int history_log_2, bool verbose, bool time, bool compress)
+static bool process_file(_Optional const char *input_file,
+                         _Optional const char *output_file,
+                         GKProcessFn *processor, unsigned int history_log_2,
+                         bool verbose, bool time, bool compress)
 {
-  FILE *out = NULL, *in = NULL, *tmp = NULL;
+  _Optional FILE *out = NULL, *in = NULL, *tmp = NULL;
   bool success = true;
 
   if (input_file != NULL) {
@@ -92,7 +95,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
     if (verbose)
       printf("Opening input file '%s'\n", input_file);
 
-    in = fopen(input_file, "rb");
+    in = fopen(&*input_file, "rb");
     if (in == NULL) {
       fprintf(stderr, "Failed to open input file: %s\n", strerror(errno));
       success = false;
@@ -105,7 +108,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
 
   if (success) {
     if (output_file != NULL) {
-      if (input_file != NULL && strcmp(output_file, input_file) == 0) {
+      if (input_file != NULL && strcmp(&*output_file, &*input_file) == 0) {
         /* Can't overwrite the input file whilst reading from it, so direct
            output to a temporary file instead */
         if (verbose)
@@ -122,7 +125,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
         if (verbose)
           printf("Opening output file '%s'\n", output_file);
 
-        out = fopen(output_file, "wb");
+        out = fopen(&*output_file, "wb");
         if (out == NULL) {
           fprintf(stderr, "Failed to open output file: %s\n", strerror(errno));
           success = false;
@@ -134,10 +137,10 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
     }
   }
 
-  if (success) {
+  if (success && in && out) {
     const clock_t start_time = time ? clock() : 0;
 
-    success = processor(in, tmp != NULL ? tmp : out, history_log_2, verbose);
+    success = processor(&*in, tmp != NULL ? &*tmp : &*out, history_log_2, verbose);
 
     if (success && time)
     {
@@ -149,7 +152,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
   if (in != NULL && in != stdout) {
     if (verbose)
       puts("Closing input file");
-    fclose(in);
+    fclose(&*in);
   }
 
   /* If we wrote to a temporary file then copy it to the real output */
@@ -160,7 +163,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
         if (verbose)
           printf("Opening output file '%s'\n", output_file);
 
-        out = fopen(input_file, "wb");
+        out = fopen(&*input_file, "wb");
         if (out == NULL) {
           fprintf(stderr,
                   "Failed to open output file: %s\n",
@@ -171,14 +174,16 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
         /* Default output is to standard output stream */
         out = stdout;
       }
+    }
 
+    if (success) {
       if (verbose)
         puts("Copying from temporary to final output");
 
-      if (fseek(tmp, 0L, SEEK_SET)) {
+      if (fseek(&*tmp, 0L, SEEK_SET)) {
         fprintf(stderr, "Failed to seek start of temporary file\n");
         success = false;
-      } else if (!fcopy(tmp, out)) {
+      } else if (!fcopy(&*tmp, &*out)) {
         success = false;
       }
     }
@@ -186,13 +191,13 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
     /* Close the temporary file (which also deletes it) */
     if (verbose)
       puts("Closing temporary file");
-    fclose(tmp);
+    fclose(&*tmp);
   }
 
   if (out != NULL && out != stdout) {
     if (verbose)
       puts("Closing output file");
-    if (fclose(out)) {
+    if (fclose(&*out)) {
       fprintf(stderr, "Failed to close output file: %s\n", strerror(errno));
       success = false;
     }
@@ -205,7 +210,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
       if (verbose)
         puts("Setting type of output file");
 
-      if (!set_file_type(output_file, compress)) {
+      if (!set_file_type(&*output_file, compress)) {
         fputs("Failed to set output file type\n", stderr);
         success = false;
       }
@@ -214,7 +219,7 @@ static bool process_file(const char *input_file, const char *output_file, GKProc
     /* Delete malformed output unless debugging is enabled or
        it may actually be the input (still intact) */
     if (!success && !verbose && out != NULL && out != stdout)
-      remove(output_file);
+      remove(&*output_file);
   }
 
   return success;
@@ -258,12 +263,12 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor, const char
   int n;
   bool verbose = false, time = false, batch = false;
   int rtn = EXIT_SUCCESS;
-  const char *output_file = NULL, *input_file = NULL;
+  _Optional const char *output_file = NULL, *input_file = NULL;
   unsigned int history_log_2 = FEDNET_COMP_LOG_2;
 
   assert(argc > 0);
   assert(argv != NULL);
-  assert(processor != NULL);
+  assert(processor);
   assert(description != NULL);
 
 #ifdef FORTIFY

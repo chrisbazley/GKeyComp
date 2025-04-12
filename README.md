@@ -3,7 +3,7 @@ Gordon Key file compression utilities
 
 (C) Chris Bazley, 2011
 
-Version 0.05 (19 May 2024)
+Version 0.06 (13 Apr 2025)
 
 -----------------------------------------------------------------------------
  1   Introduction and Purpose
@@ -333,6 +333,10 @@ this type!
 - Added a new makefile for use on Linux.
 - Improved the README.md file for Linux users.
 - Some code is now conditionally compiled only if the macro ACORN_C is defined.
+
+0.06 (13 Apr 2025)
+- Fix 'format not a string literal and no format arguments' warning.
+- Dogfooding the _Optional qualifier.
 
 -----------------------------------------------------------------------------
 9   Compiling the program
