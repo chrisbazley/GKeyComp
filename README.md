@@ -3,7 +3,7 @@ Gordon Key file compression utilities
 
 (C) Chris Bazley, 2011
 
-Version 0.06 (13 Apr 2025)
+Version 0.07 (10 May 2025)
 
 -----------------------------------------------------------------------------
  1   Introduction and Purpose
@@ -337,6 +337,10 @@ this type!
 0.06 (13 Apr 2025)
 - Fix 'format not a string literal and no format arguments' warning.
 - Dogfooding the _Optional qualifier.
+
+Version 0.07 (10 May 2025)
+- Changes to accommodate the fact that null is no longer accepted as
+  a progress callback context argument.
 
 -----------------------------------------------------------------------------
 9   Compiling the program

@@ -52,7 +52,7 @@ static void show_progress(long int in, long int out)
            ((double)out * 100) / in, in, out);
 }
 
-static bool update_progress(_Optional void *arg, size_t in, size_t out)
+static bool update_progress(void *arg, size_t in, size_t out)
 {
   NOT_USED(arg);
 
@@ -92,7 +92,6 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
   long int in_total, out_total, in_told;
   _Optional GKeyComp *comp = NULL;
   GKeyStatus status;
-  GKeyParameters params;
 
   assert(in != NULL);
   assert(out != NULL);
@@ -139,11 +138,12 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
     goto cleanup;
   }
 
-  params.out_buffer = out_buffer;
-  params.out_size = sizeof(out_buffer);
-  params.in_size = 0;
-  params.prog_cb = verbose ? update_progress : (GKeyProgressFn *)NULL;
-  params.cb_arg = NULL;
+  GKeyParameters params = {
+    .out_buffer = out_buffer,
+    .out_size = sizeof(out_buffer),
+    .in_size = 0,
+    .prog_cb = verbose ? update_progress : (GKeyProgressFn *)NULL,
+  };
 
   do {
     /* Is the input buffer empty? We don't guard against refilling it if we
