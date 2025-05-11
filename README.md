@@ -3,7 +3,7 @@ Gordon Key file compression utilities
 
 (C) Chris Bazley, 2011
 
-Version 0.07 (10 May 2025)
+Version 0.08 (11 May 2025)
 
 -----------------------------------------------------------------------------
  1   Introduction and Purpose
@@ -341,6 +341,10 @@ this type!
 Version 0.07 (10 May 2025)
 - Changes to accommodate the fact that null is no longer accepted as
   a progress callback context argument.
+
+Version 0.08 (11 May 2025)
+- Replaced local definitions with an Optional.h header shared with other
+  programs.
 
 -----------------------------------------------------------------------------
 9   Compiling the program
