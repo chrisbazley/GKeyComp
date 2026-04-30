@@ -9,14 +9,13 @@ FetchContent_Declare(GKey GIT_REPOSITORY https://github.com/chrisbazley/GKeyLib.
 FetchContent_MakeAvailable(CBUtil GKey)
 
 set(CMAKE_C_STANDARD 99)
-add_compile_options(-pedantic)
 
 if(MSVC)
     # MSVC equivalent of -Wall -Wextra is /W4
     add_compile_options(/W4)
 else()
     # For GCC and Clang
-    add_compile_options(-Wall -Wextra)
+    add_compile_options(-Wall -Wextra -pedantic)
 endif()
 
 if(WIN32)
