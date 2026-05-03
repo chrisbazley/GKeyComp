@@ -3,12 +3,13 @@ BasedOnStyle: LLVM
 
 AlignConsecutiveDeclarations: false
 AlignConsecutiveAssignments: false
+AllowShortFunctionsOnASingleLine: None
 
 PointerAlignment: Right
 
 AlignAfterOpenBracket: Align
 
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Linux
 
 IndentWidth: 2
 ContinuationIndentWidth: 2
