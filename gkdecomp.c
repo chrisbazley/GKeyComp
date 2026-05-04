@@ -19,12 +19,12 @@
  */
 
 /* ISO library header files */
+#include <assert.h>
+#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
-#include <stdbool.h>
-#include <errno.h>
 
 /* CBUtilLib headers */
 #include "FileRWInt.h"
@@ -33,18 +33,17 @@
 #include "GKeyDecomp.h"
 
 /* Local headers */
-#include "misc.h"
 #include "gkcommon.h"
+#include "misc.h"
 #include "version.h"
 
 /* Constant numeric values */
-enum
-{
-  FEDNET_HEADER_SIZE = 4,   /* No. of bytes in a 32 bit integer */
-  BUFFER_SIZE        = 256, /* I/O buffer size, in bytes */
-  PROGRESS_FREQ      = 64,  /* No. of bytes to read between progress reports */
-  FEDNET_COMP_LOG_2  = 9    /* Base 2 logarithm of the history size used by
-                               the compression algorithm, in bytes */
+enum {
+  FEDNET_HEADER_SIZE = 4, /* No. of bytes in a 32 bit integer */
+  BUFFER_SIZE = 256,      /* I/O buffer size, in bytes */
+  PROGRESS_FREQ = 64,     /* No. of bytes to read between progress reports */
+  FEDNET_COMP_LOG_2 = 9   /* Base 2 logarithm of the history size used by
+                             the compression algorithm, in bytes */
 };
 
 static void show_progress(long int in, long int out)
@@ -66,7 +65,8 @@ static bool update_progress(void *arg, size_t in, size_t out)
   return true; /* continue decompressing */
 }
 
-static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
+static bool decomp(FILE *in, FILE *out, unsigned int history_log_2,
+                   bool verbose)
 {
   char in_buffer[BUFFER_SIZE], out_buffer[BUFFER_SIZE];
   bool in_pending, success = false;
@@ -82,9 +82,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
   /* Read the expected size of the decompressed data to check that the
      file wasn't truncated or otherwise corrupted. */
   if (!fread_int32le(&expected, in)) {
-    fprintf(stderr,
-            "Failed to read uncompressed size: %s\n",
-            strerror(errno));
+    fprintf(stderr, "Failed to read uncompressed size: %s\n", strerror(errno));
     goto cleanup;
   }
   in_total += FEDNET_HEADER_SIZE;
@@ -92,17 +90,13 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
   if (expected < 0) {
     /* Gordon Key's file decompression module 'FDComp', which is presumably
        normative, rejects top bit set values. */
-    fprintf(stderr,
-            "Negative or over-large uncompressed size %ld\n",
-            expected);
+    fprintf(stderr, "Negative or over-large uncompressed size %ld\n", expected);
     goto cleanup;
   }
 
   decomp = gkeydecomp_make(history_log_2);
   if (decomp == NULL) {
-    fprintf(stderr,
-            "Failed to allocate memory: %s\n",
-            strerror(errno));
+    fprintf(stderr, "Failed to allocate memory: %s\n", strerror(errno));
     goto cleanup;
   }
 
@@ -121,8 +115,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
       params.in_size = fread(in_buffer, 1, sizeof(in_buffer), in);
       if (params.in_size != sizeof(in_buffer) && ferror(in)) {
         /* Read error not end of file */
-        fprintf(stderr,
-                "Failed to read compressed data from file: %s\n",
+        fprintf(stderr, "Failed to read compressed data from file: %s\n",
                 strerror(errno));
         goto cleanup;
       }
@@ -136,8 +129,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
        there is no more input pending. */
     in_pending = params.in_size > 0 || !feof(in);
 
-    if (in_pending && status == GKeyStatus_TruncatedInput)
-    {
+    if (in_pending && status == GKeyStatus_TruncatedInput) {
       /* False alarm before end of input data */
       status = GKeyStatus_OK;
     }
@@ -149,10 +141,8 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
 
       /* Empty the output buffer by writing to file */
       if (fwrite(out_buffer, 1, nout, out) != nout) {
-        fprintf(stderr,
-                "Failed to write %lu bytes to file: %s\n",
-                (unsigned long)nout,
-                strerror(errno));
+        fprintf(stderr, "Failed to write %lu bytes to file: %s\n",
+                (unsigned long)nout, strerror(errno));
         goto cleanup;
       }
 
@@ -178,9 +168,8 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose
 
     default:
       if (out_total != expected) {
-        fprintf(stderr,
-                "Decompressed %ld bytes but expected %ld\n",
-                out_total, expected);
+        fprintf(stderr, "Decompressed %ld bytes but expected %ld\n", out_total,
+                expected);
       } else {
         success = true;
       }
@@ -195,7 +184,7 @@ cleanup:
 int main(int argc, const char *argv[])
 {
   static const char description[] =
-    "Gordon Key file decompression utility, "VERSION_STRING"\n"
+    "Gordon Key file decompression utility, " VERSION_STRING "\n"
     "Copyright (C) 2011, Christopher Bazley";
 
   return main_common(argc, argv, decomp, description, false);

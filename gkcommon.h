@@ -22,11 +22,13 @@
 #define GKCOMMON_H
 
 /* ISO library header files */
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
-typedef bool GKProcessFn(FILE *in, FILE *out, unsigned int history_log_2, bool verbose);
+typedef bool GKProcessFn(FILE *in, FILE *out, unsigned int history_log_2,
+                         bool verbose);
 
-int main_common(int argc, const char *argv[], GKProcessFn *processor, const char *description, bool compress);
+int main_common(int argc, const char *argv[], GKProcessFn *processor,
+                const char *description, bool compress);
 
 #endif /* GKCOMMON_H */

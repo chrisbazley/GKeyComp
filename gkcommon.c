@@ -19,30 +19,29 @@
  */
 
 /* ISO library header files */
+#include <assert.h>
 #include <ctype.h>
+#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
-#include <stdbool.h>
-#include <errno.h>
 #include <time.h>
 
 /* CBUtilLib headers */
-#include "StrExtra.h"
 #include "ArgUtils.h"
+#include "StrExtra.h"
 
 /* Local headers */
-#include "misc.h"
 #include "filetype.h"
 #include "gkcommon.h"
+#include "misc.h"
 
-enum
-{
+enum {
   FEDNET_COMP_LOG_2 = 9, /* Base 2 logarithm of the history size used by The
                             Fourth Dimension and Fednet games, in bytes */
   MAX_HISTORY_LOG_2 = 31,
-  BUFFER_SIZE       = 256 /* Buffer used when reading temporary file back in */
+  BUFFER_SIZE = 256 /* Buffer used when reading temporary file back in */
 };
 
 static bool fcopy(FILE *in, FILE *out)
@@ -59,8 +58,7 @@ static bool fcopy(FILE *in, FILE *out)
     if (n != sizeof(buffer)) {
       /* The input buffer wasn't filled (end of file or read error) */
       if (ferror(in)) {
-        fprintf(stderr,
-                "Failed to read from temporary file: %s\n",
+        fprintf(stderr, "Failed to read from temporary file: %s\n",
                 strerror(errno));
         success = false;
         break;
@@ -70,10 +68,8 @@ static bool fcopy(FILE *in, FILE *out)
     /* Write out the data read into the input buffer */
     if (n != fwrite(buffer, 1, n, out)) {
       /* Not all the data was written */
-      fprintf(stderr,
-              "Failed to write %lu bytes to output file: %s\n",
-              (unsigned long)n,
-              strerror(errno));
+      fprintf(stderr, "Failed to write %lu bytes to output file: %s\n",
+              (unsigned long)n, strerror(errno));
       success = false;
       break;
     }
@@ -140,10 +136,10 @@ static bool process_file(_Optional const char *input_file,
   if (success && in && out) {
     const clock_t start_time = time ? clock() : 0;
 
-    success = processor(&*in, tmp != NULL ? &*tmp : &*out, history_log_2, verbose);
+    success =
+      processor(&*in, tmp != NULL ? &*tmp : &*out, history_log_2, verbose);
 
-    if (success && time)
-    {
+    if (success && time) {
       printf("Time taken: %.2f seconds\n",
              (double)(clock_t)(clock() - start_time) / CLOCKS_PER_SEC);
     }
@@ -165,9 +161,7 @@ static bool process_file(_Optional const char *input_file,
 
         out = fopen(&*input_file, "wb");
         if (out == NULL) {
-          fprintf(stderr,
-                  "Failed to open output file: %s\n",
-                  strerror(errno));
+          fprintf(stderr, "Failed to open output file: %s\n", strerror(errno));
           success = false;
         }
       } else {
@@ -233,20 +227,21 @@ static int syntax_msg(FILE *f, const char *path)
   assert(path != NULL);
 
   leaf = strtail(path, PATH_SEPARATOR, 1);
-  fprintf(f,
-          "usage: %s [switches] inputfile [outputfile]\n"
-          "or     %s -batch [switches] file1 [file2 file3 .. fileN]\n"
-          "If no input file is specified, it reads from stdin.\n"
-          "If no output file is specified, it writes to stdout.\n"
-          "In batch processing mode, output overwrites the input.\n"
-          "Switches (names may be abbreviated):\n"
-          "  -help               Display this text\n"
-          "  -batch              Process a batch of files (see above)\n"
-          "  -outfile name       Specify name for output file\n"
-          "  -history N          History buffer size as a base 2 logarithm\n"
-          "  -time               Show the total time for each file processed\n"
-          "  -verbose or -debug  Emit debug information (and keep bad output)\n",
-          leaf, leaf);
+  fprintf(
+    f,
+    "usage: %s [switches] inputfile [outputfile]\n"
+    "or     %s -batch [switches] file1 [file2 file3 .. fileN]\n"
+    "If no input file is specified, it reads from stdin.\n"
+    "If no output file is specified, it writes to stdout.\n"
+    "In batch processing mode, output overwrites the input.\n"
+    "Switches (names may be abbreviated):\n"
+    "  -help               Display this text\n"
+    "  -batch              Process a batch of files (see above)\n"
+    "  -outfile name       Specify name for output file\n"
+    "  -history N          History buffer size as a base 2 logarithm\n"
+    "  -time               Show the total time for each file processed\n"
+    "  -verbose or -debug  Emit debug information (and keep bad output)\n",
+    leaf, leaf);
   return EXIT_FAILURE;
 }
 
@@ -258,7 +253,8 @@ static void check_for_leaks(void)
 }
 #endif
 
-int main_common(int argc, const char *argv[], GKProcessFn *processor, const char *description, bool compress)
+int main_common(int argc, const char *argv[], GKProcessFn *processor,
+                const char *description, bool compress)
 {
   int n;
   bool verbose = false, time = false, batch = false;
@@ -297,8 +293,8 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor, const char
       output_file = argv[n];
     } else if (is_switch(opt, "history", 1)) {
       long int num;
-      if (!get_long_arg("history", &num, 0, MAX_HISTORY_LOG_2,
-                        argc, argv, ++n)) {
+      if (!get_long_arg("history", &num, 0, MAX_HISTORY_LOG_2, argc, argv,
+                        ++n)) {
         return syntax_msg(stderr, argv[0]);
       }
       history_log_2 = (int)num;
@@ -329,16 +325,10 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor, const char
   if (batch) {
     /* In batch processing mode, there remaining arguments are treated as a
        list of file names (output to input files) */
-    for (; n < argc && rtn == EXIT_SUCCESS; n++)
-    {
+    for (; n < argc && rtn == EXIT_SUCCESS; n++) {
       assert(argv[n] != NULL);
-      if (!process_file(argv[n],
-                        argv[n],
-                        processor,
-                        history_log_2,
-                        verbose,
-                        time,
-                        compress))
+      if (!process_file(argv[n], argv[n], processor, history_log_2, verbose,
+                        time, compress))
         rtn = EXIT_FAILURE;
     }
   } else {
@@ -366,13 +356,8 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor, const char
       return syntax_msg(stderr, argv[0]);
     }
 
-    if (!process_file(input_file,
-                      output_file,
-                      processor,
-                      history_log_2,
-                      verbose,
-                      time,
-                      compress))
+    if (!process_file(input_file, output_file, processor, history_log_2,
+                      verbose, time, compress))
       rtn = EXIT_FAILURE;
   }
 

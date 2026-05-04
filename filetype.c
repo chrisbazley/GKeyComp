@@ -28,14 +28,13 @@
 #endif
 
 /* Local headers */
-#include "misc.h"
 #include "filetype.h"
+#include "misc.h"
 
-enum
-{
+enum {
   FTYPE_FEDNET = 0x154, /* RISC OS file type illicitly used for SF3000
                           or SR2000 compressed code or data */
-  FTYPE_DATA   = 0xFFD  /* General-purpose RISC OS file type for data */
+  FTYPE_DATA = 0xFFD    /* General-purpose RISC OS file type for data */
 };
 
 /* Platform-specific function */

@@ -19,12 +19,12 @@
  */
 
 /* ISO library header files */
+#include <assert.h>
+#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
-#include <stdbool.h>
-#include <errno.h>
 
 /* CBUtilLib headers */
 #include "FileRWInt.h"
@@ -33,16 +33,15 @@
 #include "GKeyComp.h"
 
 /* Local headers */
-#include "misc.h"
 #include "gkcommon.h"
+#include "misc.h"
 #include "version.h"
 
 /* Constant numeric values */
-enum
-{
-  FEDNET_HEADER_SIZE = 4,  /* No. of bytes in a 32 bit integer */
-  BUFFER_SIZE       = 256, /* I/O buffer size, in bytes */
-  PROGRESS_FREQ     = 64,  /* No. of bytes to read between progress reports */
+enum {
+  FEDNET_HEADER_SIZE = 4, /* No. of bytes in a 32 bit integer */
+  BUFFER_SIZE = 256,      /* I/O buffer size, in bytes */
+  PROGRESS_FREQ = 64,     /* No. of bytes to read between progress reports */
 };
 
 static void show_progress(long int in, long int out)
@@ -119,11 +118,10 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
 
     /* Write expected size of uncompressed data */
     if (verbose)
-        puts("Writing uncompressed size");
+      puts("Writing uncompressed size");
 
     if (!fwrite_int32le(in_told, out)) {
-      fprintf(stderr,
-              "Failed to write uncompressed size: %s\n",
+      fprintf(stderr, "Failed to write uncompressed size: %s\n",
               strerror(errno));
       goto cleanup;
     }
@@ -155,8 +153,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
       params.in_size = fread(in_buffer, 1, sizeof(in_buffer), in);
       if (params.in_size != sizeof(in_buffer) && ferror(in)) {
         /* Read error not end of file */
-        fprintf(stderr,
-                "Failed to read uncompressed data from input: %s\n",
+        fprintf(stderr, "Failed to read uncompressed data from input: %s\n",
                 strerror(errno));
         goto cleanup;
       }
@@ -171,19 +168,15 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
     status = gkeycomp_compress(&*comp, &params);
 
     /* Is the output buffer full or have we finished? */
-    if (status == GKeyStatus_Finished ||
-        status == GKeyStatus_BufferOverflow ||
-        params.out_size == 0)
-    {
+    if (status == GKeyStatus_Finished || status == GKeyStatus_BufferOverflow ||
+        params.out_size == 0) {
       /* Empty the output buffer by writing to file */
       const size_t nout = sizeof(out_buffer) - params.out_size;
       out_total += nout;
 
       if (fwrite(out_buffer, 1, nout, out) != nout) {
-        fprintf(stderr,
-                "Failed to write %lu bytes to output: %s\n",
-                (unsigned long)nout,
-                strerror(errno));
+        fprintf(stderr, "Failed to write %lu bytes to output: %s\n",
+                (unsigned long)nout, strerror(errno));
         goto cleanup;
       }
 
@@ -202,7 +195,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
   if (in_told != -1L) {
     /* Verify that the input was the expected size */
     if (verbose)
-        puts("Validating input size against expected");
+      puts("Validating input size against expected");
 
     if (in_told != in_total) {
       fprintf(stderr,
@@ -213,7 +206,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
   } else {
     /* We deferred writing the uncompressed size */
     if (verbose)
-        printf("Writing uncompressed size %ld\n", in_total);
+      printf("Writing uncompressed size %ld\n", in_total);
 
     /* Restore the initial output position */
     if (fseek(out, 0, SEEK_SET)) {
@@ -223,8 +216,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
 
     /* Write size of uncompressed data */
     if (!fwrite_int32le(in_total, out)) {
-      fprintf(stderr,
-              "Failed to write uncompressed size: %s\n",
+      fprintf(stderr, "Failed to write uncompressed size: %s\n",
               strerror(errno));
       goto cleanup;
     }
@@ -240,7 +232,7 @@ cleanup:
 int main(int argc, const char *argv[])
 {
   static const char description[] =
-    "Gordon Key file compression utility, "VERSION_STRING"\n"
+    "Gordon Key file compression utility, " VERSION_STRING "\n"
     "Copyright (C) 2011, Christopher Bazley";
 
   return main_common(argc, argv, comp, description, true);

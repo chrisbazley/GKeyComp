@@ -29,15 +29,19 @@
 
 #else /* USE_CBDEBUG */
 
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define DEBUG_SET_OUTPUT(output_mode, log_name)
 
 #ifdef DEBUG_OUTPUT
-#define DEBUGF if (1) printf
+#define DEBUGF                                                                 \
+  if (1)                                                                       \
+  printf
 #else
-#define DEBUGF if (0) printf
+#define DEBUGF                                                                 \
+  if (0)                                                                       \
+  printf
 #endif /* DEBUG_OUTPUT */
 
 #endif /* USE_CBDEBUG */
