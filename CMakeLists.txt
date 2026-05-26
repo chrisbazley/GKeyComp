@@ -51,11 +51,19 @@ else()
     add_compile_definitions(PATH_SEPARATOR='/')
 endif()
 
-set(GKCOMPSOURCES 
-    gkcomp.c gkcommon.c filetype.c
+set(COMMON_SOURCES
+    gkcommon.c filetype.c
 )
 
-add_executable(gkcomp ${GKCOMPSOURCES})
+set(COMMON_HEADERS
+    gkcommon.h filetype.h misc.h version.h
+)
+
+set(GKCOMP_SOURCES
+    gkcomp.c ${COMMON_SOURCES} ${COMMON_HEADERS}
+)
+
+add_executable(gkcomp ${GKCOMP_SOURCES})
 
 target_link_libraries(gkcomp PRIVATE 
     CBUtil
@@ -66,11 +74,11 @@ target_compile_definitions(gkcomp PRIVATE
     $<$<CONFIG:Debug>:DEBUG_OUTPUT>
 )
 
-set(GKDECOMPSOURCES 
-    gkdecomp.c gkcommon.c filetype.c
+set(GKDECOMP_SOURCES
+    gkdecomp.c ${COMMON_SOURCES} ${COMMON_HEADERS}
 )
 
-add_executable(gkdecomp ${GKDECOMPSOURCES})
+add_executable(gkdecomp ${GKDECOMP_SOURCES})
 
 target_link_libraries(gkdecomp PRIVATE 
     CBUtil
