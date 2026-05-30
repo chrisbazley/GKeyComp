@@ -59,9 +59,4 @@ target_link_libraries(gkdecomp PRIVATE
 
 target_compile_definitions(gkdecomp PRIVATE
     $<$<CONFIG:Debug>:DEBUG_OUTPUT>
-    $<$<CONFIG:Release>:NDEBUG>
-)
-
-target_compile_options(gkdecomp PRIVATE
-    $<$<CONFIG:Release>:-O3>
 )
