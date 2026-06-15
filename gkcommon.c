@@ -273,6 +273,12 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
 #endif
   DEBUG_SET_OUTPUT(DebugOutput_StdErr, "");
 
+#ifdef _WIN32
+  /* Force binary mode on Windows standard streams to prevent text corruption */
+  _setmode(_fileno(stdin), _O_BINARY);
+  _setmode(_fileno(stdout), _O_BINARY);
+#endif
+
   /* Parse any options specified on the command line */
   for (n = 1; n < argc && argv[n][0] == '-'; n++) {
     const char *opt = argv[n] + 1;
