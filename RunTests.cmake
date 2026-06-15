@@ -370,7 +370,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT comp_stdout MATCHES "usage: gkcomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT comp_stdout MATCHES "usage: ${GKCOMP} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${comp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
@@ -382,7 +382,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT decomp_stdout MATCHES "usage: gkdecomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT decomp_stdout MATCHES "usage: ${GKDECOMP} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${decomp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
@@ -765,7 +765,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT comp_stdout MATCHES "usage: gkcomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT comp_stdout MATCHES "usage: ${GKCOMP} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${comp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
@@ -777,7 +777,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT decomp_stdout MATCHES "usage: gkdecomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT decomp_stdout MATCHES "usage: ${GKDECOMP} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${decomp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
