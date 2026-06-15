@@ -8,6 +8,10 @@ if(NOT GKDECOMP)
     set(GKDECOMP "./gkdecomp")
 endif()
 
+message(STATUS "DEBUG: Current working directory is: ${CMAKE_CURRENT_BINARY_DIR}")
+message(STATUS "DEBUG: Path to gkcomp executable is: ${GKCOMP}")
+message(STATUS "DEBUG: Path to gkdecomp executable is: ${GKDECOMP}")
+
 message(STATUS "Starting History Buffer Sizes Verification...")
 # Create a text file to test the history window boundaries
 set(TEXT_BLOCK "Acorn RISC OS Fourth Dimension FedNet Chocks Away Stunt Racer Star Fighter GKeyLib. ")
