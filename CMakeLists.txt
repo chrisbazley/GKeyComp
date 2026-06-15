@@ -88,3 +88,6 @@ target_link_libraries(gkdecomp PRIVATE
 target_compile_definitions(gkdecomp PRIVATE
     $<$<CONFIG:Debug>:DEBUG_OUTPUT>
 )
+
+enable_testing()
+add_test(NAME IntegrationTest COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTests.cmake)
