@@ -212,7 +212,7 @@ static bool process_file(_Optional const char *input_file,
 
     /* Delete malformed output unless debugging is enabled or
        it may actually be the input (still intact) */
-    if (!success && !verbose && out != NULL && out != stdout)
+    if (!success && !verbose && out != NULL)
       remove(&*output_file);
   }
 
