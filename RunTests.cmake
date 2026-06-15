@@ -2,13 +2,13 @@
 cmake_minimum_required(VERSION 3.10)
 
 if(GKCOMP)
-    cmake_path(CONVERT "${GKCOMP}" TO_NATIVE_PATH GKCOMP)
+    cmake_path(NATIVE_PATH GKCOMP GKCOMP)
 else()
     set(GKCOMP "./gkcomp")
 endif()
 
 if(GKDECOMP)
-    cmake_path(CONVERT "${GKDECOMP}" TO_NATIVE_PATH GKDECOMP)
+    cmake_path(NATIVE_PATH GKDECOMP GKDECOMP)
 else()
     set(GKDECOMP "./gkdecomp")
 endif()
