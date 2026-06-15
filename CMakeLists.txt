@@ -90,4 +90,8 @@ target_compile_definitions(gkdecomp PRIVATE
 )
 
 enable_testing()
-add_test(NAME IntegrationTest COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTests.cmake)
+add_test(NAME IntegrationTest COMMAND ${CMAKE_COMMAND}
+    -D GKCOMP=$<TARGET_FILE:gkcomp>
+    -D GKDECOMP=$<TARGET_FILE:gkdecomp>
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTests.cmake
+)

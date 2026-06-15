@@ -1,6 +1,13 @@
 # RunTests.cmake
 cmake_minimum_required(VERSION 3.10)
 
+if(NOT GKCOMP)
+    set(GKCOMP "./gkcomp")
+endif()
+if(NOT GKDECOMP)
+    set(GKDECOMP "./gkdecomp")
+endif()
+
 message(STATUS "Starting History Buffer Sizes Verification...")
 # Create a text file to test the history window boundaries
 set(TEXT_BLOCK "Acorn RISC OS Fourth Dimension FedNet Chocks Away Stunt Racer Star Fighter GKeyLib. ")
@@ -22,7 +29,7 @@ foreach(HIST_VAL ${HISTORY_VALUES})
 
     # 1. Compress using current history log-2 value
     execute_process(
-        COMMAND ./gkcomp -history ${HIST_VAL} "buffer_original.txt" "buffer_squeezed.bin"
+        COMMAND ${GKCOMP} -history ${HIST_VAL} "buffer_original.txt" "buffer_squeezed.bin"
         RESULT_VARIABLE cmd_res
     )
     if(NOT cmd_res EQUAL 0)
@@ -31,7 +38,7 @@ foreach(HIST_VAL ${HISTORY_VALUES})
 
     # 2. Decompress using current history log-2 value
     execute_process(
-        COMMAND ./gkdecomp -history ${HIST_VAL} "buffer_squeezed.bin" "buffer_restored.txt"
+        COMMAND ${GKDECOMP} -history ${HIST_VAL} "buffer_squeezed.bin" "buffer_restored.txt"
         RESULT_VARIABLE cmd_res
     )
     if(NOT cmd_res EQUAL 0)
@@ -60,7 +67,7 @@ message(STATUS "Starting Mismatching History Buffer Sizes Verification...")
 
 # 1. Compress using one history log-2 value
 execute_process(
-    COMMAND ./gkcomp -history 8 "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -history 8 "buffer_original.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -69,7 +76,7 @@ endif()
 
 # 2. Decompress using another history log-2 value
 execute_process(
-    COMMAND ./gkdecomp -history 9 "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -history 9 "buffer_squeezed.bin" "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
 )
 if(cmd_res EQUAL 0)
@@ -86,7 +93,7 @@ message(STATUS "Starting output file name before input file name verification...
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -outfile "buffer_squeezed.bin" "buffer_original.txt"
+    COMMAND ${GKCOMP} -outfile "buffer_squeezed.bin" "buffer_original.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -95,7 +102,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -outfile "buffer_restored.txt" "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -outfile "buffer_restored.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -123,7 +130,7 @@ message(STATUS "Starting output file name and input from stream verification..."
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -outfile "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -outfile "buffer_squeezed.bin"
     INPUT_FILE "buffer_original.txt"
     RESULT_VARIABLE cmd_res
 )
@@ -133,7 +140,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -outfile "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -outfile "buffer_restored.txt"
     INPUT_FILE "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
@@ -162,7 +169,7 @@ message(STATUS "Starting input from a stream and output to a stream verification
 
 # 1. Compress with no file names
 execute_process(
-    COMMAND ./gkcomp
+    COMMAND ${GKCOMP}
     INPUT_FILE "buffer_original.txt"
     OUTPUT_FILE "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
@@ -173,7 +180,7 @@ endif()
 
 # 2. Decompress with no file names
 execute_process(
-    COMMAND ./gkdecomp
+    COMMAND ${GKDECOMP}
     INPUT_FILE "buffer_squeezed.bin"
     OUTPUT_FILE "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
@@ -203,7 +210,7 @@ message(STATUS "Starting input file name and output to stream verification...")
 
 # 1. Compress with no output file name
 execute_process(
-    COMMAND ./gkcomp "buffer_original.txt"
+    COMMAND ${GKCOMP} "buffer_original.txt"
     OUTPUT_FILE "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
@@ -213,7 +220,7 @@ endif()
 
 # 2. Decompress with no output file name
 execute_process(
-    COMMAND ./gkdecomp "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} "buffer_squeezed.bin"
     OUTPUT_FILE "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
 )
@@ -244,7 +251,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy "buffer_original.txt" "buffer_c
 
 # 1. Compress with output file name same as input file name
 execute_process(
-    COMMAND ./gkcomp "buffer_copy.txt" "buffer_copy.txt"
+    COMMAND ${GKCOMP} "buffer_copy.txt" "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -253,7 +260,7 @@ endif()
 
 # 2. Decompress with output file name same as input file name
 execute_process(
-    COMMAND ./gkdecomp "buffer_copy.txt" "buffer_copy.txt"
+    COMMAND ${GKDECOMP} "buffer_copy.txt" "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -283,7 +290,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy "buffer_original.txt" "buffer_c
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -outfile "buffer_copy.txt" "buffer_copy.txt"
+    COMMAND ${GKCOMP} -outfile "buffer_copy.txt" "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -292,7 +299,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -outfile "buffer_copy.txt" "buffer_copy.txt"
+    COMMAND ${GKDECOMP} -outfile "buffer_copy.txt" "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -322,7 +329,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy "buffer_original.txt" "buffer_c
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -batch "buffer_copy.txt"
+    COMMAND ${GKCOMP} -batch "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -331,7 +338,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -batch "buffer_copy.txt"
+    COMMAND ${GKDECOMP} -batch "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -353,7 +360,7 @@ endif()
 # STAGE 11: Help text
 # =====================================================================
 message(STATUS "Starting Help Verification...")
-execute_process(COMMAND ./gkcomp -help RESULT_VARIABLE cmd_res OUTPUT_VARIABLE comp_stdout)
+execute_process(COMMAND ${GKCOMP} -help RESULT_VARIABLE cmd_res OUTPUT_VARIABLE comp_stdout)
 if(NOT cmd_res EQUAL 0)
     message(FATAL_ERROR "Compression help failed with exit code ${cmd_res}")
 endif()
@@ -365,7 +372,7 @@ else()
     message(STATUS "Success: help message verified.")
 endif()
 
-execute_process(COMMAND ./gkdecomp -help RESULT_VARIABLE cmd_res OUTPUT_VARIABLE decomp_stdout)
+execute_process(COMMAND ${GKDECOMP} -help RESULT_VARIABLE cmd_res OUTPUT_VARIABLE decomp_stdout)
 if(NOT cmd_res EQUAL 0)
     message(FATAL_ERROR "Decompression help failed with exit code ${cmd_res}")
 endif()
@@ -384,7 +391,7 @@ message(STATUS "Starting Timed Operations Verification...")
 
 # 1. Time compress with no output filename
 execute_process(
-    COMMAND ./gkcomp -time "buffer_original.txt"
+    COMMAND ${GKCOMP} -time "buffer_original.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -401,7 +408,7 @@ endif()
 
 # 2. Time compress with an output filename
 execute_process(
-    COMMAND ./gkcomp -time "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -time "buffer_original.txt" "buffer_squeezed.bin"
     OUTPUT_VARIABLE comp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -417,7 +424,7 @@ endif()
 
 # 3. Time decompress with no output filename
 execute_process(
-    COMMAND ./gkdecomp -time "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -time "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -434,7 +441,7 @@ endif()
 
 # 4. Time decompress with an output filename
 execute_process(
-    COMMAND ./gkdecomp -time "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -time "buffer_squeezed.bin" "buffer_restored.txt"
     OUTPUT_VARIABLE decomp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -469,7 +476,7 @@ message(STATUS "Starting Verbose Operations Verification...")
 
 # 1. Verbose compress with no output filename
 execute_process(
-    COMMAND ./gkcomp -verbose "buffer_original.txt"
+    COMMAND ${GKCOMP} -verbose "buffer_original.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -486,7 +493,7 @@ endif()
 
 # 2. Verbose compress with an output filename
 execute_process(
-    COMMAND ./gkcomp -verbose "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -verbose "buffer_original.txt" "buffer_squeezed.bin"
     OUTPUT_VARIABLE comp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -496,7 +503,7 @@ endif()
 
 # 3. Verbose decompress with no output filename
 execute_process(
-    COMMAND ./gkdecomp -verbose "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -verbose "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -513,7 +520,7 @@ endif()
 
 # 4. Verbose decompress with an output filename
 execute_process(
-    COMMAND ./gkdecomp -verbose "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -verbose "buffer_squeezed.bin" "buffer_restored.txt"
     OUTPUT_VARIABLE decomp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -528,7 +535,7 @@ message(STATUS "Starting Debug Operations Verification...")
 
 # 1. Debug compress with no output filename
 execute_process(
-    COMMAND ./gkcomp -debug "buffer_original.txt"
+    COMMAND ${GKCOMP} -debug "buffer_original.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -545,7 +552,7 @@ endif()
 
 # 2. Debug compress with an output filename
 execute_process(
-    COMMAND ./gkcomp -debug "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -debug "buffer_original.txt" "buffer_squeezed.bin"
     OUTPUT_VARIABLE comp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -555,7 +562,7 @@ endif()
 
 # 3. Debug decompress with no output filename
 execute_process(
-    COMMAND ./gkdecomp -debug "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -debug "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -572,7 +579,7 @@ endif()
 
 # 4. Debug decompress with an output filename
 execute_process(
-    COMMAND ./gkdecomp -debug "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -debug "buffer_squeezed.bin" "buffer_restored.txt"
     OUTPUT_VARIABLE decomp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -601,7 +608,7 @@ foreach(HIST_VAL ${HISTORY_VALUES})
 
     # 1. Compress using current history log-2 value
     execute_process(
-        COMMAND ./gkcomp -hi ${HIST_VAL} "buffer_original.txt" "buffer_squeezed.bin"
+        COMMAND ${GKCOMP} -hi ${HIST_VAL} "buffer_original.txt" "buffer_squeezed.bin"
         RESULT_VARIABLE cmd_res
     )
     if(NOT cmd_res EQUAL 0)
@@ -610,7 +617,7 @@ foreach(HIST_VAL ${HISTORY_VALUES})
 
     # 2. Decompress using current history log-2 value
     execute_process(
-        COMMAND ./gkdecomp -hi ${HIST_VAL} "buffer_squeezed.bin" "buffer_restored.txt"
+        COMMAND ${GKDECOMP} -hi ${HIST_VAL} "buffer_squeezed.bin" "buffer_restored.txt"
         RESULT_VARIABLE cmd_res
     )
     if(NOT cmd_res EQUAL 0)
@@ -639,7 +646,7 @@ message(STATUS "Starting output file name before input file name verification...
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -o "buffer_squeezed.bin" "buffer_original.txt"
+    COMMAND ${GKCOMP} -o "buffer_squeezed.bin" "buffer_original.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -648,7 +655,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -o "buffer_restored.txt" "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -o "buffer_restored.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -676,7 +683,7 @@ message(STATUS "Starting output file name and input from stream verification..."
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -o "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -o "buffer_squeezed.bin"
     INPUT_FILE "buffer_original.txt"
     RESULT_VARIABLE cmd_res
 )
@@ -686,7 +693,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -outfile "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -outfile "buffer_restored.txt"
     INPUT_FILE "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
@@ -717,7 +724,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy "buffer_original.txt" "buffer_c
 
 # 1. Compress with output file name specified by an option
 execute_process(
-    COMMAND ./gkcomp -b "buffer_copy.txt"
+    COMMAND ${GKCOMP} -b "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -726,7 +733,7 @@ endif()
 
 # 2. Decompress with output file name specified by an option
 execute_process(
-    COMMAND ./gkdecomp -b "buffer_copy.txt"
+    COMMAND ${GKDECOMP} -b "buffer_copy.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -748,7 +755,7 @@ endif()
 # STAGE 18: Help text
 # =====================================================================
 message(STATUS "Starting Help Verification...")
-execute_process(COMMAND ./gkcomp -he RESULT_VARIABLE cmd_res OUTPUT_VARIABLE comp_stdout)
+execute_process(COMMAND ${GKCOMP} -he RESULT_VARIABLE cmd_res OUTPUT_VARIABLE comp_stdout)
 if(NOT cmd_res EQUAL 0)
     message(FATAL_ERROR "Compression help failed with exit code ${cmd_res}")
 endif()
@@ -760,7 +767,7 @@ else()
     message(STATUS "Success: help message verified.")
 endif()
 
-execute_process(COMMAND ./gkdecomp -he RESULT_VARIABLE cmd_res OUTPUT_VARIABLE decomp_stdout)
+execute_process(COMMAND ${GKDECOMP} -he RESULT_VARIABLE cmd_res OUTPUT_VARIABLE decomp_stdout)
 if(NOT cmd_res EQUAL 0)
     message(FATAL_ERROR "Decompression help failed with exit code ${cmd_res}")
 endif()
@@ -779,7 +786,7 @@ message(STATUS "Starting Timed Operations Verification...")
 
 # 1. Time compress with no output filename
 execute_process(
-    COMMAND ./gkcomp -t "buffer_original.txt"
+    COMMAND ${GKCOMP} -t "buffer_original.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -796,7 +803,7 @@ endif()
 
 # 2. Time compress with an output filename
 execute_process(
-    COMMAND ./gkcomp -t "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -t "buffer_original.txt" "buffer_squeezed.bin"
     OUTPUT_VARIABLE comp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -812,7 +819,7 @@ endif()
 
 # 3. Time decompress with no output filename
 execute_process(
-    COMMAND ./gkdecomp -t "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -t "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -829,7 +836,7 @@ endif()
 
 # 4. Time decompress with an output filename
 execute_process(
-    COMMAND ./gkdecomp -t "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -t "buffer_squeezed.bin" "buffer_restored.txt"
     OUTPUT_VARIABLE decomp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -864,7 +871,7 @@ message(STATUS "Starting Verbose Operations Verification...")
 
 # 1. Verbose compress with no output filename
 execute_process(
-    COMMAND ./gkcomp -v "buffer_original.txt"
+    COMMAND ${GKCOMP} -v "buffer_original.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -881,7 +888,7 @@ endif()
 
 # 2. Verbose compress with an output filename
 execute_process(
-    COMMAND ./gkcomp -v "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -v "buffer_original.txt" "buffer_squeezed.bin"
     OUTPUT_VARIABLE comp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -897,7 +904,7 @@ endif()
 
 # 3. Verbose decompress with no output filename
 execute_process(
-    COMMAND ./gkdecomp -v "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -v "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -914,7 +921,7 @@ endif()
 
 # 4. Verbose decompress with an output filename
 execute_process(
-    COMMAND ./gkdecomp -v "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -v "buffer_squeezed.bin" "buffer_restored.txt"
     OUTPUT_VARIABLE decomp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -938,7 +945,7 @@ message(STATUS "Starting Debug Operations Verification...")
 
 # 1. Debug compress with no output filename
 execute_process(
-    COMMAND ./gkcomp -d "buffer_original.txt"
+    COMMAND ${GKCOMP} -d "buffer_original.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -955,7 +962,7 @@ endif()
 
 # 2. Debug compress with an output filename
 execute_process(
-    COMMAND ./gkcomp -d "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -d "buffer_original.txt" "buffer_squeezed.bin"
     OUTPUT_VARIABLE comp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -971,7 +978,7 @@ endif()
 
 # 3. Debug decompress with no output filename
 execute_process(
-    COMMAND ./gkdecomp -d "buffer_squeezed.bin"
+    COMMAND ${GKDECOMP} -d "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -988,7 +995,7 @@ endif()
 
 # 4. Debug decompress with an output filename
 execute_process(
-    COMMAND ./gkdecomp -d "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -d "buffer_squeezed.bin" "buffer_restored.txt"
     OUTPUT_VARIABLE decomp_stdout
     RESULT_VARIABLE cmd_res
 )
@@ -1012,7 +1019,7 @@ message(STATUS "Starting Missing history operand Verification...")
 
 # 1. Compress with missing history operand
 execute_process(
-    COMMAND ./gkcomp -history "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -history "buffer_original.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -1029,7 +1036,7 @@ endif()
 
 # 2. Compress with history operand
 execute_process(
-    COMMAND ./gkcomp -history 9 "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -history 9 "buffer_original.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -1038,7 +1045,7 @@ endif()
 
 # 3. Decompress with missing history operand
 execute_process(
-    COMMAND ./gkdecomp -history "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -history "buffer_squeezed.bin" "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -1055,7 +1062,7 @@ endif()
 
 # 4. Decompress with history operand
 execute_process(
-    COMMAND ./gkdecomp -history 9 "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -history 9 "buffer_squeezed.bin" "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -1072,7 +1079,7 @@ message(STATUS "Starting Invalid Switch Verification...")
 
 # 1. Compress with invalid switch
 execute_process(
-    COMMAND ./gkcomp -verboid "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} -verboid "buffer_original.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE comp_stderr
 )
@@ -1089,7 +1096,7 @@ endif()
 
 # 2. Compress
 execute_process(
-    COMMAND ./gkcomp "buffer_original.txt" "buffer_squeezed.bin"
+    COMMAND ${GKCOMP} "buffer_original.txt" "buffer_squeezed.bin"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
@@ -1098,7 +1105,7 @@ endif()
 
 # 3. Decompress with invalid switch
 execute_process(
-    COMMAND ./gkdecomp -verboid "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} -verboid "buffer_squeezed.bin" "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
     ERROR_VARIABLE decomp_stderr
 )
@@ -1115,7 +1122,7 @@ endif()
 
 # 4. Decompress
 execute_process(
-    COMMAND ./gkdecomp "buffer_squeezed.bin" "buffer_restored.txt"
+    COMMAND ${GKDECOMP} "buffer_squeezed.bin" "buffer_restored.txt"
     RESULT_VARIABLE cmd_res
 )
 if(NOT cmd_res EQUAL 0)
