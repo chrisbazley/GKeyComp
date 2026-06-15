@@ -18,6 +18,11 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifdef _WIN32
+#include <io.h>     /* Required for _setmode and _fileno */
+#include <fcntl.h>  /* Required for _O_BINARY */
+#endif
+
 /* ISO library header files */
 #include <assert.h>
 #include <ctype.h>
