@@ -105,6 +105,10 @@ static bool process_file(_Optional const char *input_file,
   } else {
     /* Default input is from standard input stream */
     fprintf(stderr, "Reading from stdin...\n");
+#ifdef _WIN32
+    /* Force binary mode on Windows to prevent text corruption */
+    _setmode(_fileno(stdin), _O_BINARY);
+#endif
     actual_in = stdin;
   }
 
@@ -135,6 +139,10 @@ static bool process_file(_Optional const char *input_file,
       }
     } else {
       /* Default output is to standard output stream */
+#ifdef _WIN32
+      /* Force binary mode on Windows standard streams to prevent corruption */
+      _setmode(_fileno(stdout), _O_BINARY);
+#endif
       actual_out = stdout;
     }
   }
@@ -171,6 +179,10 @@ static bool process_file(_Optional const char *input_file,
         }
       } else {
         /* Default output is to standard output stream */
+#ifdef _WIN32
+        /* Force binary mode on Windows standard streams to prevent corruption */
+        _setmode(_fileno(stdout), _O_BINARY);
+#endif
         actual_out = stdout;
       }
     }
@@ -277,12 +289,6 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
   atexit(check_for_leaks);
 #endif
   DEBUG_SET_OUTPUT(DebugOutput_StdErr, "");
-
-#ifdef _WIN32
-  /* Force binary mode on Windows standard streams to prevent text corruption */
-  _setmode(_fileno(stdin), _O_BINARY);
-  _setmode(_fileno(stdout), _O_BINARY);
-#endif
 
   /* Parse any options specified on the command line */
   for (n = 1; n < argc && argv[n][0] == '-'; n++) {
