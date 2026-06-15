@@ -106,7 +106,7 @@ static bool process_file(_Optional const char *input_file,
     /* Default input is from standard input stream */
     fprintf(stderr, "Reading from stdin...\n");
 #ifdef _WIN32
-    /* Force binary mode on Windows to prevent text corruption */
+    /* Force binary mode on Windows to prevent corruption */
     _setmode(_fileno(stdin), _O_BINARY);
 #endif
     actual_in = stdin;
