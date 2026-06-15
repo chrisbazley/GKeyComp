@@ -1,10 +1,15 @@
 # RunTests.cmake
 cmake_minimum_required(VERSION 3.10)
 
-if(NOT GKCOMP)
+if(GKCOMP)
+    cmake_path(CONVERT "${GKCOMP}" TO_NATIVE_PATH GKCOMP)
+else()
     set(GKCOMP "./gkcomp")
 endif()
-if(NOT GKDECOMP)
+
+if(GKDECOMP)
+    cmake_path(CONVERT "${GKDECOMP}" TO_NATIVE_PATH GKDECOMP)
+else()
     set(GKDECOMP "./gkdecomp")
 endif()
 
