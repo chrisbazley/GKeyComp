@@ -294,7 +294,7 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
   for (n = 1; n < argc && argv[n][0] == '-'; n++) {
     const char *opt = argv[n] + 1;
 
-    if (is_switch(opt, "help", 1)) {
+    if (is_switch(opt, "help", 2)) {
       /* Output version number and usage information */
       (void)syntax_msg(stdout, argv[0]);
       return EXIT_SUCCESS;
@@ -308,7 +308,7 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
         return syntax_msg(stderr, argv[0]);
       }
       output_file = argv[n];
-    } else if (is_switch(opt, "history", 1)) {
+    } else if (is_switch(opt, "history", 2)) {
       long int num;
       if (!get_long_arg("history", &num, 0, MAX_HISTORY_LOG_2, argc, argv,
                         ++n)) {
