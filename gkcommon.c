@@ -133,11 +133,13 @@ static bool process_file(_Optional const char *input_file,
     }
   }
 
-  if (success && in && out) {
+  _Optional FILE *imm_out = (tmp != NULL ? tmp : out);
+
+  if (success && in && imm_out) {
     const clock_t start_time = time ? clock() : 0;
 
     success =
-      processor(&*in, tmp != NULL ? &*tmp : &*out, history_log_2, verbose);
+      processor(&*in, &*imm_out, history_log_2, verbose);
 
     if (success && time) {
       printf("Time taken: %.2f seconds\n",
