@@ -17,6 +17,9 @@ message(STATUS "DEBUG: Current working directory is: ${CMAKE_CURRENT_BINARY_DIR}
 message(STATUS "DEBUG: Path to gkcomp executable is: ${GKCOMP}")
 message(STATUS "DEBUG: Path to gkdecomp executable is: ${GKDECOMP}")
 
+get_filename_component(GKCOMP_LEAF_NAME "${GKCOMP}" NAME)
+get_filename_component(GKDECOMP_LEAF_NAME "${GKDECOMP}" NAME)
+
 message(STATUS "Starting History Buffer Sizes Verification...")
 # Create a text file to test the history window boundaries
 set(TEXT_BLOCK "Acorn RISC OS Fourth Dimension FedNet Chocks Away Stunt Racer Star Fighter GKeyLib. ")
@@ -375,7 +378,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT comp_stdout MATCHES "usage: gkcomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT comp_stdout MATCHES "usage: ${GKCOMP_LEAF_NAME} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${comp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
@@ -387,7 +390,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT decomp_stdout MATCHES "usage: gkdecomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT decomp_stdout MATCHES "usage: ${GKDECOMP_LEAF_NAME} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${decomp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
@@ -770,7 +773,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT comp_stdout MATCHES "usage: gkcomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT comp_stdout MATCHES "usage: ${GKCOMP_LEAF_NAME} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${comp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
@@ -782,7 +785,7 @@ if(NOT cmd_res EQUAL 0)
 endif()
 
 # Check that the output contains the exact help string
-if(NOT decomp_stdout MATCHES "usage: gkdecomp \\[switches\\] inputfile \\[outputfile\\]")
+if(NOT decomp_stdout MATCHES "usage: ${GKDECOMP_LEAF_NAME} \\[switches\\] inputfile \\[outputfile\\]")
     message(FATAL_ERROR "Failure: unexpected help message. Received: '${decomp_stdout}'")
 else()
     message(STATUS "Success: help message verified.")
