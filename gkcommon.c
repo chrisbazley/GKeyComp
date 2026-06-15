@@ -83,7 +83,8 @@ static bool process_file(_Optional const char *input_file,
                          GKProcessFn *processor, unsigned int history_log_2,
                          bool verbose, bool time, bool compress)
 {
-  _Optional FILE *out = NULL, *in = NULL, *tmp = NULL;
+  _Optional FILE *out = NULL, *in = NULL, *tmp = NULL, *actual_out = NULL,
+                 *actual_in = NULL;
   bool success = true;
 
   if (input_file != NULL) {
@@ -91,7 +92,7 @@ static bool process_file(_Optional const char *input_file,
     if (verbose)
       printf("Opening input file '%s'\n", input_file);
 
-    in = fopen(&*input_file, "rb");
+    actual_in = in = fopen(&*input_file, "rb");
     if (in == NULL) {
       fprintf(stderr, "Failed to open input file: %s\n", strerror(errno));
       success = false;
@@ -99,7 +100,7 @@ static bool process_file(_Optional const char *input_file,
   } else {
     /* Default input is from standard input stream */
     fprintf(stderr, "Reading from stdin...\n");
-    in = stdin;
+    actual_in = stdin;
   }
 
   if (success) {
@@ -110,7 +111,7 @@ static bool process_file(_Optional const char *input_file,
         if (verbose)
           puts("Opening temporary output file");
 
-        tmp = tmpfile();
+        actual_out = tmp = tmpfile();
         if (tmp == NULL) {
           fprintf(stderr, "Failed to create temporary output file: %s\n",
                   strerror(errno));
@@ -121,7 +122,7 @@ static bool process_file(_Optional const char *input_file,
         if (verbose)
           printf("Opening output file '%s'\n", output_file);
 
-        out = fopen(&*output_file, "wb");
+        actual_out = out = fopen(&*output_file, "wb");
         if (out == NULL) {
           fprintf(stderr, "Failed to open output file: %s\n", strerror(errno));
           success = false;
@@ -129,17 +130,14 @@ static bool process_file(_Optional const char *input_file,
       }
     } else {
       /* Default output is to standard output stream */
-      out = stdout;
+      actual_out = stdout;
     }
   }
 
-  _Optional FILE *imm_out = (tmp != NULL ? tmp : out);
-
-  if (success && in && imm_out) {
+  if (success && actual_in && actual_out) {
     const clock_t start_time = time ? clock() : 0;
 
-    success =
-      processor(&*in, &*imm_out, history_log_2, verbose);
+    success = processor(&*actual_in, &*actual_out, history_log_2, verbose);
 
     if (success && time) {
       printf("Time taken: %.2f seconds\n",
@@ -147,7 +145,7 @@ static bool process_file(_Optional const char *input_file,
     }
   }
 
-  if (in != NULL && in != stdout) {
+  if (in != NULL) {
     if (verbose)
       puts("Closing input file");
     fclose(&*in);
@@ -161,25 +159,25 @@ static bool process_file(_Optional const char *input_file,
         if (verbose)
           printf("Opening output file '%s'\n", output_file);
 
-        out = fopen(&*input_file, "wb");
+        actual_out = out = fopen(&*input_file, "wb");
         if (out == NULL) {
           fprintf(stderr, "Failed to open output file: %s\n", strerror(errno));
           success = false;
         }
       } else {
         /* Default output is to standard output stream */
-        out = stdout;
+        actual_out = stdout;
       }
     }
 
-    if (success) {
+    if (success && actual_out) {
       if (verbose)
         puts("Copying from temporary to final output");
 
       if (fseek(&*tmp, 0L, SEEK_SET)) {
         fprintf(stderr, "Failed to seek start of temporary file\n");
         success = false;
-      } else if (!fcopy(&*tmp, &*out)) {
+      } else if (!fcopy(&*tmp, &*actual_out)) {
         success = false;
       }
     }
@@ -190,7 +188,7 @@ static bool process_file(_Optional const char *input_file,
     fclose(&*tmp);
   }
 
-  if (out != NULL && out != stdout) {
+  if (out != NULL) {
     if (verbose)
       puts("Closing output file");
     if (fclose(&*out)) {
