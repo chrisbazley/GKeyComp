@@ -355,7 +355,19 @@ and link the code you will also require an ISO 9899:1999 standard 'C'
 library and two of my own libraries: CBUtilLib and GKeyLib. These are
 available separately from https://github.com/chrisbazley/
 
-  Three makefiles are supplied:
+  If you have CMake, a build system generator, then you can use it to
+fetch libraries that are dependencies of these programs and build the
+libraries and programs with minimal manual intervention.
+
+For example, use the following commands to build and test on Linux:
+```
+  cmake -G 'Unix Makefiles' -S . -B build
+  cd build
+  make
+  ctest
+```
+
+  Three makefiles are also supplied:
 
 1. 'Makefile' is intended for use with GNU Make and the GNU C Compiler on Linux.
 
