@@ -19,7 +19,7 @@
 #endif
 
 #ifdef FORTIFY
-#include "Fortify.h"
+#include "fortify.h"
 #endif
 
 /* Suppress compiler warnings about an unused function argument. */
