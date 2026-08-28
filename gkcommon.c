@@ -263,10 +263,21 @@ static int syntax_msg(FILE *f, const char *path)
 }
 
 #ifdef FORTIFY
+static bool fortify_detected;
+
+static void fortify_output(const char *text)
+{
+  fputs(text, stdout);
+  if (strstr(text, "detected"))
+    fortify_detected = true;
+}
+
 static void check_for_leaks(void)
 {
   /* Report any memory still allocated upon exit from the program */
   Fortify_LeaveScope();
+  Fortify_CheckAllMemory();
+  assert(!fortify_detected);
 }
 #endif
 
@@ -285,6 +296,7 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
   assert(description != NULL);
 
 #ifdef FORTIFY
+  Fortify_SetOutputFunc(fortify_output);
   Fortify_EnterScope();
   atexit(check_for_leaks);
 #endif
