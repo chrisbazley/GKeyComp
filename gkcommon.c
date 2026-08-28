@@ -264,10 +264,11 @@ static int syntax_msg(FILE *f, const char *path)
 
 #ifdef FORTIFY
 static bool fortify_detected;
+static Fortify_OutputFuncPtr fortify_previous_output;
 
 static void fortify_output(const char *text)
 {
-  fputs(text, stdout);
+  fortify_previous_output(text);
   if (strstr(text, "detected"))
     fortify_detected = true;
 }
@@ -296,7 +297,7 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
   assert(description != NULL);
 
 #ifdef FORTIFY
-  Fortify_SetOutputFunc(fortify_output);
+  fortify_previous_output = Fortify_SetOutputFunc(fortify_output);
   Fortify_EnterScope();
   atexit(check_for_leaks);
 #endif
