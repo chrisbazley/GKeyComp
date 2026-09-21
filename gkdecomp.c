@@ -70,14 +70,15 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2,
 {
   char in_buffer[BUFFER_SIZE], out_buffer[BUFFER_SIZE];
   bool in_pending, success = false;
-  long int expected, out_total, in_total;
+  long int expected;
   _Optional GKeyDecomp *decomp = NULL;
   GKeyStatus status;
 
   assert(in != NULL);
   assert(out != NULL);
 
-  out_total = in_total = 0;
+  long int in_total = 0;
+  long int out_total = 0;
 
   /* Read the expected size of the decompressed data to check that the
      file wasn't truncated or otherwise corrupted. */

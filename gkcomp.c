@@ -88,14 +88,15 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
 {
   char in_buffer[BUFFER_SIZE], out_buffer[BUFFER_SIZE];
   bool success = false;
-  long int in_total, out_total, in_told;
+  long int in_told;
   _Optional GKeyComp *comp = NULL;
   GKeyStatus status;
 
   assert(in != NULL);
   assert(out != NULL);
 
-  out_total = in_total = 0;
+  long int in_total = 0;
+  long int out_total = 0;
 
   /* Try to leave room for the uncompressed size. This will fail if
      the output stream isn't seekable (e.g. stdout to a terminal). */
