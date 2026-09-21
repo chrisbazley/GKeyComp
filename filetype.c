@@ -23,8 +23,8 @@
 #include <stdbool.h>
 
 #ifdef ACORN_C
-/* RISC OS header files */
-#include "kernel.h"
+/* CBOSLib header files */
+#include "OSFile.h"
 #endif
 
 /* Local headers */
@@ -41,14 +41,12 @@ enum {
 bool set_file_type(const char *file_path, bool compressed)
 {
 #ifdef ACORN_C
-  _kernel_osfile_block kob;
-
   assert(file_path != NULL);
 
   /* Apply the RISC OS file type for Fednet game data to the
      specified file. */
-  kob.load = compressed ? FTYPE_FEDNET : FTYPE_DATA;
-  return (_kernel_osfile(18, file_path, &kob) != _kernel_ERROR);
+  return os_file_set_type(file_path,
+                          compressed ? FTYPE_FEDNET : FTYPE_DATA) == NULL;
 #else
   NOT_USED(file_path);
   NOT_USED(compressed);

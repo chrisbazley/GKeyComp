@@ -8,9 +8,10 @@ option(ENABLE_CLANG_TIDY "Run clang-tidy during compilation" OFF)
 include(FetchContent)
 
 FetchContent_Declare(CBUtil GIT_REPOSITORY https://github.com/chrisbazley/CBUtilLib.git GIT_TAG main)
+FetchContent_Declare(CBOS GIT_REPOSITORY https://github.com/chrisbazley/CBOSLib.git GIT_TAG main)
 FetchContent_Declare(GKey GIT_REPOSITORY https://github.com/chrisbazley/GKeyLib.git GIT_TAG main)
 
-FetchContent_MakeAvailable(CBUtil GKey)
+FetchContent_MakeAvailable(CBUtil CBOS GKey)
 
 if(USE_OPTIONAL)
     if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang")
@@ -97,6 +98,7 @@ add_executable(gkcomp ${GKCOMP_SOURCES})
 
 target_link_libraries(gkcomp PRIVATE 
     CBUtil
+    CBOS
     GKey
 )
 
@@ -112,6 +114,7 @@ add_executable(gkdecomp ${GKDECOMP_SOURCES})
 
 target_link_libraries(gkdecomp PRIVATE 
     CBUtil
+    CBOS
     GKey
 )
 
