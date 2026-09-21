@@ -238,12 +238,11 @@ static bool process_file(_Optional const char *input_file,
 
 static int syntax_msg(FILE *f, const char *path)
 {
-  const char *leaf;
 
   assert(f != NULL);
   assert(path != NULL);
 
-  leaf = strtail(path, PATH_SEPARATOR, 1);
+  const char *leaf = strtail(path, PATH_SEPARATOR, 1);
   fprintf(
     f,
     "usage: %s [switches] inputfile [outputfile]\n"
