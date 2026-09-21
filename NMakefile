@@ -19,8 +19,8 @@ ReleaseObjectsComp = $(addprefix o.,$(ObjectListComp))
 DebugObjectsDecomp = $(addprefix debug.,$(ObjectListDecomp))
 ReleaseObjectsDecomp = $(addprefix o.,$(ObjectListDecomp))
 
-DebugLibs = C:o.Stubs C:o.Fortify C:o.CBDebugLib C:debug.CBUtilLib C:debug.GKeyLib
-ReleaseLibs = C:o.StubsG C:o.CBUtilLib C:o.GKeyLib
+DebugLibs = C:o.Stubs C:o.Fortify C:o.CBDebugLib C:debug.CBUtilLib C:debug.CBOSLib C:debug.GKeyLib
+ReleaseLibs = C:o.StubsG C:o.CBUtilLib C:o.CBOSLib C:o.GKeyLib
 
 # Final targets:
 all: gkdecomp gkcomp gkdecompD gkcompD
