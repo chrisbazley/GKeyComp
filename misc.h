@@ -7,6 +7,8 @@
 #ifndef MISC_H
 #define MISC_H
 
+#include "MacroUtils.h"
+
 /* Modify these definitions for Unix or Windows file paths. */
 #ifndef PATH_SEPARATOR
 #ifdef _WIN32
@@ -20,11 +22,6 @@
 
 #ifdef FORTIFY
 #include "fortify.h"
-#endif
-
-/* Suppress compiler warnings about an unused function argument. */
-#ifndef NOT_USED
-#define NOT_USED(x) x = x;
 #endif
 
 #ifdef USE_CBDEBUG
