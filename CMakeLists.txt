@@ -128,3 +128,18 @@ add_test(NAME IntegrationTest COMMAND ${CMAKE_COMMAND}
     -D GKDECOMP=$<TARGET_FILE:gkdecomp>
     -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTests.cmake
 )
+
+if(USE_FORTIFY)
+    add_test(NAME FortifyFailureTest COMMAND ${CMAKE_COMMAND}
+        -D GKCOMP=$<TARGET_FILE:gkcomp>
+        -D GKDECOMP=$<TARGET_FILE:gkdecomp>
+        -D FORTIFY_FAILURE_TEST=TRUE
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunTests.cmake
+    )
+    set_tests_properties(FortifyFailureTest PROPERTIES
+        ENVIRONMENT "GKEY_FORTIFY_FAILURE_SIMULATION=1"
+        LABELS "integration;fortify"
+        RUN_SERIAL TRUE
+        TIMEOUT 300
+    )
+endif()

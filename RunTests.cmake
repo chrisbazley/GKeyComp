@@ -21,6 +21,50 @@ get_filename_component(GKCOMP_LEAF_NAME "${GKCOMP}" NAME)
 get_filename_component(GKDECOMP_LEAF_NAME "${GKDECOMP}" NAME)
 
 message(STATUS "Starting History Buffer Sizes Verification...")
+
+if(FORTIFY_FAILURE_TEST)
+    set(input "gkey_fortify_input.txt")
+    set(compressed "gkey_fortify_compressed.bin")
+    set(output "gkey_fortify_output.txt")
+    file(WRITE "${input}"
+        "Acorn RISC OS Fourth Dimension FedNet Chocks Away GKeyLib.\n")
+
+    execute_process(
+        COMMAND "${GKCOMP}" "${input}" "${compressed}"
+        RESULT_VARIABLE command_result
+        OUTPUT_FILE "gkey_fortify_comp.stdout"
+        ERROR_FILE "gkey_fortify_comp.stderr"
+    )
+    if(NOT command_result EQUAL 0)
+        message(FATAL_ERROR
+            "Compression failure simulation failed with code "
+            "${command_result}")
+    endif()
+
+    execute_process(
+        COMMAND "${GKDECOMP}" "${compressed}" "${output}"
+        RESULT_VARIABLE command_result
+        OUTPUT_FILE "gkey_fortify_decomp.stdout"
+        ERROR_FILE "gkey_fortify_decomp.stderr"
+    )
+    if(NOT command_result EQUAL 0)
+        message(FATAL_ERROR
+            "Decompression failure simulation failed with code "
+            "${command_result}")
+    endif()
+
+    execute_process(
+        COMMAND "${CMAKE_COMMAND}" -E compare_files "${input}" "${output}"
+        RESULT_VARIABLE command_result
+    )
+    if(command_result)
+        message(FATAL_ERROR "Failure simulation corrupted the round trip")
+    endif()
+
+    file(REMOVE "${input}" "${compressed}" "${output}")
+    return()
+endif()
+
 # Create a text file to test the history window boundaries
 set(TEXT_BLOCK "Acorn RISC OS Fourth Dimension FedNet Chocks Away Stunt Racer Star Fighter GKeyLib. ")
 set(LARGE_TEXT "")
