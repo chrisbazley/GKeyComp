@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -272,17 +273,66 @@ static void fortify_output(const char *text)
     fortify_detected = true;
 }
 
-static void check_for_leaks(void)
-{
-  /* Report any memory still allocated upon exit from the program */
-  Fortify_LeaveScope();
-  Fortify_CheckAllMemory();
-  assert(!fortify_detected);
-}
-#endif
+static int real_main_common(int argc, const char *argv[],
+                            GKProcessFn *processor, const char *description,
+                            bool compress);
 
 int main_common(int argc, const char *argv[], GKProcessFn *processor,
                 const char *description, bool compress)
+{
+  _Optional const char *const failure_simulation =
+    getenv("GKEY_FORTIFY_FAILURE_SIMULATION");
+  bool simulate_failures =
+    failure_simulation != NULL && !strcmp(&*failure_simulation, "1");
+  unsigned long failures_to_simulate = ULONG_MAX;
+  _Optional const char *const failure_attempts =
+    getenv("GKEY_FORTIFY_FAILURE_ATTEMPTS");
+  if (failure_attempts != NULL) {
+    char *end;
+    const unsigned long attempts = strtoul(&*failure_attempts, &end, 10);
+    if (*failure_attempts != '\0' && *end == '\0' && attempts > 0)
+      failures_to_simulate = attempts;
+  }
+  unsigned long limit = simulate_failures ? 0 : ULONG_MAX;
+  unsigned long failures_simulated = 0;
+  int rtn;
+
+  fortify_previous_output = Fortify_SetOutputFunc(fortify_output);
+  do {
+    if (simulate_failures) {
+      rewind(stdin);
+      clearerr(stdout);
+      printf("------ Allocation limit %lu ------\n", limit);
+    }
+
+    Fortify_SetNumAllocationsLimit(limit);
+    Fortify_EnterScope();
+    rtn = real_main_common(argc, argv, processor, description, compress);
+    Fortify_LeaveScope();
+    Fortify_CheckAllMemory();
+    assert(!fortify_detected);
+    Fortify_SetNumAllocationsLimit(ULONG_MAX);
+
+    if (!simulate_failures || rtn == EXIT_SUCCESS)
+      break;
+    if (++failures_simulated == failures_to_simulate) {
+      simulate_failures = false;
+      limit = ULONG_MAX;
+    } else {
+      ++limit;
+    }
+  } while (true);
+
+  return rtn;
+}
+
+static int real_main_common(int argc, const char *argv[],
+                            GKProcessFn *processor, const char *description,
+                            bool compress)
+#else
+int main_common(int argc, const char *argv[], GKProcessFn *processor,
+                const char *description, bool compress)
+#endif
 {
   int n;
   bool verbose = false, time = false, batch = false;
@@ -295,11 +345,6 @@ int main_common(int argc, const char *argv[], GKProcessFn *processor,
   assert(processor);
   assert(description != NULL);
 
-#ifdef FORTIFY
-  fortify_previous_output = Fortify_SetOutputFunc(fortify_output);
-  Fortify_EnterScope();
-  atexit(check_for_leaks);
-#endif
   DEBUG_SET_OUTPUT(DebugOutput_StdErr, "");
 
   /* Parse any options specified on the command line */
