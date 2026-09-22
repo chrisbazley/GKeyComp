@@ -30,7 +30,6 @@
 #ifdef USE_CBDEBUG
 
 #include "Debug.h"
-#include "PseudoIO.h"
 #include "PseudoKern.h"
 
 #else /* USE_CBDEBUG */
