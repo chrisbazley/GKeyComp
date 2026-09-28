@@ -120,7 +120,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2,
                 strerror(errno));
         goto cleanup;
       }
-      in_total += params.in_size;
+      in_total += (long int)params.in_size;
     }
 
     /* Decompress the data from the input buffer to the output buffer */
@@ -138,7 +138,7 @@ static bool decomp(FILE *in, FILE *out, unsigned int history_log_2,
     /* Is there insufficient room in the output buffer or no more input? */
     if (status == GKeyStatus_BufferOverflow || !in_pending) {
       const size_t nout = sizeof(out_buffer) - params.out_size;
-      out_total += nout;
+      out_total += (long int)nout;
 
       /* Empty the output buffer by writing to file */
       if (fwrite(out_buffer, 1, nout, out) != nout) {

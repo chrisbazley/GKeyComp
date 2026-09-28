@@ -160,7 +160,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
       }
 
       /* Update a running total of the uncompressed input size */
-      in_total += params.in_size;
+      in_total += (long int)params.in_size;
     }
 
     /* Compress the data from the input buffer to the output buffer.
@@ -173,7 +173,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
         params.out_size == 0) {
       /* Empty the output buffer by writing to file */
       const size_t nout = sizeof(out_buffer) - params.out_size;
-      out_total += nout;
+      out_total += (long int)nout;
 
       if (fwrite(out_buffer, 1, nout, out) != nout) {
         fprintf(stderr, "Failed to write %lu bytes to output: %s\n",
