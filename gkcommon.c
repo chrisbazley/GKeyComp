@@ -213,6 +213,9 @@ static bool process_file(_Optional const char *input_file,
       fprintf(stderr, "Failed to close output file: %s\n", strerror(errno));
       success = false;
     }
+  } else if (output_file == NULL && fflush(stdout) == EOF) {
+    fprintf(stderr, "Failed to flush standard output: %s\n", strerror(errno));
+    success = false;
   }
 
   /* If we know the output file name then we should set its type
