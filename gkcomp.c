@@ -18,6 +18,10 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* History:
+  CJB: 29-Oct-26: Initialise input buffers and progress contexts with the real input objects.
+*/
+
 /* ISO library header files */
 #include <assert.h>
 #include <errno.h>
@@ -138,6 +142,8 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
   }
 
   GKeyParameters params = {
+    .in_buffer = in_buffer,
+    .cb_arg = in,
     .out_buffer = out_buffer,
     .out_size = sizeof(out_buffer),
     .in_size = 0,
