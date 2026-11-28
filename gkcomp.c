@@ -20,6 +20,7 @@
 
 /* History:
   CJB: 29-Oct-26: Initialise input buffers and progress contexts with the real input objects.
+  CJB: 28-Nov-26: Remove redundant casts of NULL to function pointer types.
 */
 
 /* ISO library header files */
@@ -147,7 +148,7 @@ static bool comp(FILE *in, FILE *out, unsigned int history_log_2, bool verbose)
     .out_buffer = out_buffer,
     .out_size = sizeof(out_buffer),
     .in_size = 0,
-    .prog_cb = verbose ? update_progress : (GKeyProgressFn *)NULL,
+    .prog_cb = verbose ? update_progress : NULL,
   };
 
   do {
